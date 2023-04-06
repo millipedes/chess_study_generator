@@ -1,6 +1,9 @@
-#include <stdio.h>
+#include "../canvas/include/canvas.h"
 
 int main(void) {
-  printf("Hello World\n");
+  canvas the_canvas = init_canvas(1000, 1000);
+  // debug_canvas(the_canvas);
+  write_canvas(the_canvas, "test.ppm");
+  free_canvas(the_canvas);
   return 0;
 }
