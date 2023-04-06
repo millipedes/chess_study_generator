@@ -1,0 +1,83 @@
+@startuml
+
+class move {
+  {field} + char * white
+  {field} + char * black
+  {field} + int no
+}
+
+package stockfish_interface {
+  interface algebraic_translator {
+    {method} + translate_move_lan_san(move *)
+    {method} + translate_move_san_lan(move *)
+  }
+}
+
+package latex {
+  class study {
+    {field} + board ** shown_pos
+  }
+
+  class board {
+    {field} + move ** the_moves
+  }
+
+  class latex_presets {
+    {field} + DEFINE prefix_study
+    {field} + DEFINE suffix_study
+    {field} + DEFINE prefix_quiz
+    {field} + DEFINE suffix_quiz
+  }
+
+  class quiz {
+    {field} + board ** shown_pos
+    {field} + char * author
+    {field} + char * title
+    {field} + char * sub_title
+  }
+
+  class fen {
+    {field} + TODO ALL
+  }
+}
+
+
+package canvas {
+  class node {
+    {field} + move * the_move
+    {field} + pixel * color
+    {field} + double fx
+    {field} + double fy
+    {field} + double radius
+  }
+
+  class canvas {
+     {field} + pixel *** values
+     {field} + int width
+     {field} + height
+    {method} + init_canvas(int, int) : canvas *
+    {method} + debug_canvas(canvas *) : void
+    {method} + free_canvas(canvas *) : void
+  }
+
+  class pixel {
+     {field} + int r
+     {field} + int g
+     {field} + int b
+    {method} + init_pixel(int, int, int) : pixel *
+    {method} + debug_pixel(pixel *) : void
+    {method} + free_pixel(pixel *) : void
+  }
+}
+
+canvas "1" o--> "*" pixel
+
+node "1" o--> "*" pixel
+node "1" o--> "1" move
+
+algebraic_translator --> move
+
+study "1" o--> "*" board
+quiz "1" o--> "*" board
+
+@enduml
