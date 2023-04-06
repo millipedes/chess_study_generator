@@ -34,7 +34,7 @@ plant:
 	convert docs/uml.png -channel RGB -negate docs/uml.png
 
 git-update:
-	git add Makefile README.md src/ docs/ rename_me/
+	git add Makefile README.md src/ docs/ rename_me/ latex/
 
 clean:
 	rm $(OBJFILES)
