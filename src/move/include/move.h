@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_MOVE_SIZE 64
+
 typedef struct MOVE_T {
   char * white;
   char * black;

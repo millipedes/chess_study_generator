@@ -21,6 +21,80 @@ void debug_canvas(canvas the_canvas) {
       debug_pixel(the_canvas->values[i][j]);
 }
 
+/**
+ * This function uses Bresenham's circle drawing algorithm to draw the nodes.
+ * @param
+ * @return
+ */
+canvas write_node(canvas the_canvas, node the_node) {
+  int x = 0;
+  int y = the_node->radius;
+  int err = 3 - 2 * the_node->radius;
+  update_points(the_canvas, the_node, x, y);
+  while(y >= x) {
+    x++;
+    if(err > 0) {
+      y--;
+      err = err + 4 * (x - y) + 10;
+    } else
+      err = err + 4 * x + 6;
+    update_points(the_canvas, the_node, x, y);
+  }
+  return the_canvas;
+}
+
+canvas update_points(canvas the_canvas, node the_node, int x, int y) {
+  if(y + the_node->fy < the_canvas->height
+      && y + the_node->fy > 0
+      && x + the_node->fx < the_canvas->width
+      && x + the_node->fx > 0)
+    change_color(the_canvas->values[ y + the_node->fy][ x + the_node->fx],
+        the_node->color);
+  if(-y + the_node->fy < the_canvas->height
+      && -y + the_node->fy > 0
+      && x + the_node->fx < the_canvas->width
+      && x + the_node->fx > 0)
+    change_color(the_canvas->values[-y + the_node->fy][ x + the_node->fx],
+        the_node->color);
+  if(y + the_node->fy < the_canvas->height
+      && y + the_node->fy > 0
+      && -x + the_node->fx < the_canvas->width
+      && -x + the_node->fx > 0)
+    change_color(the_canvas->values[ y + the_node->fy][-x + the_node->fx],
+        the_node->color);
+  if(-y + the_node->fy < the_canvas->height
+      && -y + the_node->fy > 0
+      && -x + the_node->fx < the_canvas->width
+      && -x + the_node->fx > 0)
+    change_color(the_canvas->values[-y + the_node->fy][-x + the_node->fx],
+        the_node->color);
+  if(x + the_node->fy < the_canvas->height
+      && x + the_node->fy > 0
+      && y + the_node->fx < the_canvas->width
+      && y + the_node->fx > 0)
+    change_color(the_canvas->values[ x + the_node->fy][ y + the_node->fx],
+        the_node->color);
+  if(-x + the_node->fy < the_canvas->height
+      && -x + the_node->fy > 0
+      && y + the_node->fx < the_canvas->width
+      && y + the_node->fx > 0)
+    change_color(the_canvas->values[-x + the_node->fy][ y + the_node->fx],
+        the_node->color);
+  if(x + the_node->fy < the_canvas->height
+      && x + the_node->fy > 0
+      && -y + the_node->fx < the_canvas->width
+      && -y + the_node->fx > 0)
+    change_color(the_canvas->values[ x + the_node->fy][-y + the_node->fx],
+        the_node->color);
+  if(-x + the_node->fy < the_canvas->height
+      && -x + the_node->fy > 0
+      && -y + the_node->fx < the_canvas->width
+      && -y + the_node->fx > 0)
+    change_color(the_canvas->values[-x + the_node->fy][-y + the_node->fx],
+        the_node->color);
+  return the_canvas;
+}
+
 void write_canvas(canvas the_canvas, char * file_name) {
   FILE * fp = fopen(file_name, "w");
   fprintf(fp, "%s\n", PPM_HEADER);
