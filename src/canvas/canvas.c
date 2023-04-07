@@ -30,31 +30,42 @@ canvas write_node(canvas the_canvas, node the_node) {
   int x = 0;
   int y = the_node->radius;
   int err = 3 - 2 * the_node->radius;
+  FT_Library ft;
+  FT_Init_FreeType(&ft);
+  FT_Face face;
+  FT_New_Face(ft, "fonts/FiraCode-Bold.ttf", 0, &face);
+  FT_Set_Pixel_Sizes(face, 0, 60);
+  int white_len = (int)strnlen(the_node->the_move->white, MAX_MOVE_SIZE);
+  // Draw the circle
   update_points(the_canvas, the_node, x, y);
   while(y >= x) {
     x++;
     if(err > 0) {
       y--;
-      err = err + 4 * (x - y) + 10;
+      err += 4 * (x - y) + 10;
     } else
-      err = err + 4 * x + 6;
+      err += 4 * x + 6;
     update_points(the_canvas, the_node, x, y);
   }
-  FT_Library ft;
-  FT_Init_FreeType(&ft);
-  FT_Face face;
-  FT_New_Face(ft, "fonts/FiraCode-Bold.ttf", 0, &face);
-  FT_Set_Pixel_Sizes(face, 0, 48);
-  //for(int i = 0; i < strnlen(the_node->white, MAX_MOVE_SIZE); i++) {
-    FT_Load_Char(face, (int)the_node->the_move->white[0], FT_LOAD_RENDER);
+  // Draw the move letters
+  for(int i = 0; i < white_len; i++) {
+    FT_Load_Char(face, (int)the_node->the_move->white[i], FT_LOAD_RENDER);
     FT_GlyphSlot slot = face->glyph;
-    for(int j = the_node->radius;
-        j < the_node->radius + (int)slot->bitmap.rows; j++)
-      for(int k = the_node->radius;
-          k < the_node->radius + (int)slot->bitmap.width; k++)
-        if(slot->bitmap.buffer[((j - the_node->radius) * (int)slot->bitmap.width) + (k - the_node->radius)] > 0)
-          change_color(the_canvas->values[j + the_node->radius - (int)slot->bitmap.rows][k + the_node->radius - (int)slot->bitmap.width], the_node->color);
-  //}
+    int y_min = the_node->fy - (int)((double)slot->bitmap.rows / 2.0);
+    int y_max = the_node->fy + (int)((double)slot->bitmap.rows / 2.0);
+    int x_min = the_node->fx - (int)((double)slot->bitmap.width / 2.0);
+    int x_max = the_node->fx + (int)((double)slot->bitmap.width / 2.0);
+    int x_offset = (white_len / 2 - i) * (int)slot->bitmap.width;
+    for(int j = y_min; j < y_max; j++)
+      for(int k = x_min; k < x_max; k++)
+        if(slot->bitmap.buffer[((j - y_min) * (int)slot->bitmap.width)
+            + (k - x_min)] > 0) {
+          if(j > 0 && j < the_canvas->height
+              && (k - x_offset) > 0 && (k - x_offset) < the_canvas->width)
+            change_color(the_canvas->values[j][k - x_offset], the_node->color);
+        }
+  }
+  // Free the freetype stuff
   FT_Done_Face(face);
   FT_Done_FreeType(ft);
   return the_canvas;

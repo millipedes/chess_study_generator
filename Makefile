@@ -3,14 +3,14 @@ POST_FLAGS=-lm -lfreetype
 
 CCANVAS=$(wildcard ./src/canvas/*.c)
 HCANVAS=$(wildcard ./src/canvas/include/*.h)
-OCANVAS=$(wildcard ./src/canvas/*.o)
+OCANVAS=$(CCANVAS:.c=.o)
 
 CMOVE=$(wildcard ./src/move/*.c)
 HMOVE=$(wildcard ./src/move/include/*.h)
-OMOVE=$(wildcard ./src/move/*.o)
+OMOVE=$(CMOVE:.c=.o)
 
 CMAIN=$(wildcard ./src/main/*.c)
-OMAIN=$(wildcard ./src/main/*.o)
+OMAIN=$(CMAIN:.c=.o)
 
 EXEFILE=bin/main
 
@@ -19,8 +19,8 @@ all: objects
 
 objects: $(HCANVAS) $(HMOVE) $(CCANVAS) $(CMOVE) $(CMAIN)
 	$(CC) -c ./src/move/move.c -o ./src/move/move.o $(POST_FLAGS)
-	$(CC) -c ./src/canvas/pixel.c -o ./src/move/pixel.o $(POST_FLAGS)
-	$(CC) -c ./src/canvas/node.c -o ./src/move/node.o $(POST_FLAGS)
+	$(CC) -c ./src/canvas/pixel.c -o ./src/canvas/pixel.o $(POST_FLAGS)
+	$(CC) -c ./src/canvas/node.c -o ./src/canvas/node.o $(POST_FLAGS)
 	$(CC) -c ./src/canvas/canvas.c -o ./src/canvas/canvas.o $(POST_FLAGS)
 	$(CC) -c ./src/main/main.c -o ./src/main/main.o $(POST_FLAGS)
 
