@@ -157,7 +157,8 @@ canvas connect_node(canvas the_canvas, node parent, node * children,
       x_end = tmp;
     }
     if(x_start == x_end)
-      for(int j = parent->fy + parent->radius; j < children[i]->fy - children[i]->radius; j++)
+      for(int j = parent->fy + parent->radius;
+          j < children[i]->fy - children[i]->radius; j++)
         change_color(the_canvas->values[j][parent->fx], parent->color);
     else
       for(int j = x_start; j <= x_end; j++)
