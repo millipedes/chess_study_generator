@@ -8,7 +8,7 @@ canvas init_canvas(int height, int width) {
   for(int i = 0; i < height; i++) {
     the_canvas->values[i] = calloc(width, sizeof(struct PIXEL_T *));
     for(int j = 0; j < width; j++)
-      the_canvas->values[i][j] = init_pixel(MAX_COL, MAX_COL, MAX_COL);
+      the_canvas->values[i][j] = init_pixel(MIN_COL, MIN_COL, MIN_COL);
   }
   return the_canvas;
 }
@@ -120,6 +120,32 @@ canvas update_points(canvas the_canvas, node the_node, int x, int y) {
       && -y + the_node->fx > 0)
     change_color(the_canvas->values[-x + the_node->fy][-y + the_node->fx],
         the_node->color);
+  return the_canvas;
+}
+
+/**
+ * This function uses a combination of Bresenham's line drawing algorithm and
+ * parametric functions to draw the line quickly.
+ * @param
+ * @return
+ */
+canvas connect_node(canvas the_canvas, node parent, node * children,
+    int qty_children) {
+  for(int i = 0; i < qty_children; i++) {
+    int m = 0;
+    int b = 0;
+    if(parent->fx - children[i]->fx)
+      m = (int)(((double)(parent->fy - children[i]->fy)) 
+        / ((double)(parent->fx - children[i]->fx)));
+    else
+      m = parent->fx;
+    b = parent->fy - m * parent->fx;
+    int x_start = parent->fx + (parent->radius * -cos(atan2((double)m, -1.0)));
+    int x_end = children[i]->fx + (children[i]->radius
+        * cos(atan2((double)m, -1.0)));
+    for(int j = x_start; j <= x_end; j++)
+      change_color(the_canvas->values[m * j + b][j], parent->color);
+  }
   return the_canvas;
 }
 
