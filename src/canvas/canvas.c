@@ -140,11 +140,28 @@ canvas connect_node(canvas the_canvas, node parent, node * children,
     else
       m = parent->fx;
     b = parent->fy - m * parent->fx;
-    int x_start = parent->fx + (parent->radius * -cos(atan2((double)m, -1.0)));
-    int x_end = children[i]->fx + (children[i]->radius
-        * cos(atan2((double)m, -1.0)));
-    for(int j = x_start; j <= x_end; j++)
-      change_color(the_canvas->values[m * j + b][j], parent->color);
+    int x_start = 0;
+    int x_end = 0;
+    if(parent->fx < children[i]->fx) {
+      x_start = parent->fx + (parent->radius * -cos(atan2((double)m, -1.0)));
+      x_end = children[i]->fx + (children[i]->radius
+          * cos(atan2((double)m, -1.0)));
+    } else if(parent->fx > children[i]->fx) {
+      x_start = parent->fx + (parent->radius * cos(atan2((double)m, -1.0)));
+      x_end = children[i]->fx + (children[i]->radius
+          * -cos(atan2((double)m, -1.0)));
+    }
+    if(x_start > x_end) {
+      int tmp = x_start;
+      x_start = x_end;
+      x_end = tmp;
+    }
+    if(x_start == x_end)
+      for(int j = parent->fy + parent->radius; j < children[i]->fy - children[i]->radius; j++)
+        change_color(the_canvas->values[j][parent->fx], parent->color);
+    else
+      for(int j = x_start; j <= x_end; j++)
+        change_color(the_canvas->values[m * j + b][j], parent->color);
   }
   return the_canvas;
 }
