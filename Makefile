@@ -1,15 +1,28 @@
 CC=gcc -g -Wall -Wextra
-CFILES=$(wildcard src/*/*.c)
-HFILES=$(wildcard src/*/include/*.h)
-OBJFILES=$(CFILES:.c=.o)
-OBJPATH=src/objects/
+POST_FLAGS=-lm -lfreetype
+
+CCANVAS=$(wildcard ./src/canvas/*.c)
+HCANVAS=$(wildcard ./src/canvas/include/*.h)
+OCANVAS=$(wildcard ./src/canvas/*.o)
+
+CMOVE=$(wildcard ./src/move/*.c)
+HMOVE=$(wildcard ./src/move/include/*.h)
+OMOVE=$(wildcard ./src/move/*.o)
+
+CMAIN=$(wildcard ./src/main/*.c)
+OMAIN=$(wildcard ./src/main/*.o)
+
 EXEFILE=bin/main
 
-all:$(OBJFILES)
-	$(CC) $(OBJFILES) -o $(EXEFILE) -lm
+all: objects
+	$(CC) $(OCANVAS) $(OMOVE) $(OMAIN) -o $(EXEFILE) $(POST_FLAGS)
 
-%.o: %.c $(HFILES)%.h
-	$(CC) -c $(CFILES) $< -o $@ -lm
+objects: $(HCANVAS) $(HMOVE) $(CCANVAS) $(CMOVE) $(CMAIN)
+	$(CC) -c ./src/move/move.c -o ./src/move/move.o $(POST_FLAGS)
+	$(CC) -c ./src/canvas/pixel.c -o ./src/move/pixel.o $(POST_FLAGS)
+	$(CC) -c ./src/canvas/node.c -o ./src/move/node.o $(POST_FLAGS)
+	$(CC) -c ./src/canvas/canvas.c -o ./src/canvas/canvas.o $(POST_FLAGS)
+	$(CC) -c ./src/main/main.c -o ./src/main/main.o $(POST_FLAGS)
 
 vim:
 	nvim $(CFILES) 
@@ -37,5 +50,7 @@ git-update:
 	git add Makefile README.md src/ docs/ rename_me/ latex/ nix/
 
 clean:
-	rm $(OBJFILES)
-	rm $(EXEFILE)
+	- rm $(OCANVAS)
+	- rm $(OMAIN)
+	- rm $(OMOVE)
+	- rm $(EXEFILE)

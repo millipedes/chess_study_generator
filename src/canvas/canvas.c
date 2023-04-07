@@ -40,6 +40,23 @@ canvas write_node(canvas the_canvas, node the_node) {
       err = err + 4 * x + 6;
     update_points(the_canvas, the_node, x, y);
   }
+  FT_Library ft;
+  FT_Init_FreeType(&ft);
+  FT_Face face;
+  FT_New_Face(ft, "fonts/FiraCode-Bold.ttf", 0, &face);
+  FT_Set_Pixel_Sizes(face, 0, 48);
+  //for(int i = 0; i < strnlen(the_node->white, MAX_MOVE_SIZE); i++) {
+    FT_Load_Char(face, (int)the_node->the_move->white[0], FT_LOAD_RENDER);
+    FT_GlyphSlot slot = face->glyph;
+    for(int j = the_node->radius;
+        j < the_node->radius + (int)slot->bitmap.rows; j++)
+      for(int k = the_node->radius;
+          k < the_node->radius + (int)slot->bitmap.width; k++)
+        if(slot->bitmap.buffer[((j - the_node->radius) * (int)slot->bitmap.width) + (k - the_node->radius)] > 0)
+          change_color(the_canvas->values[j + the_node->radius - (int)slot->bitmap.rows][k + the_node->radius - (int)slot->bitmap.width], the_node->color);
+  //}
+  FT_Done_Face(face);
+  FT_Done_FreeType(ft);
   return the_canvas;
 }
 

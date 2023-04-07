@@ -1,7 +1,9 @@
 #ifndef CAN_H
 #define CAN_H
 
+#include <ft2build.h>
 #include "node.h"
+#include FT_FREETYPE_H
 
 #define PPM_HEADER "P3"
 
